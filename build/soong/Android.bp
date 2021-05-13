@@ -1,55 +1,3 @@
-// Evolution X soong configs
-
-bootstrap_go_package {
-    name: "soong-evolution-generator",
-    pkgPath: "evolution/soong/generator",
-    deps: [
-        "blueprint",
-        "blueprint-pathtools",
-        "soong",
-        "soong-android",
-        "soong-shared",
-    ],
-    srcs: [
-        "generator/generator.go",
-        "generator/variables.go",
-    ],
-    pluginFor: ["soong_build"],
-}
-
-evolution_generator {
-    name: "generated_kernel_includes",
-
-    // The headers make command
-    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_HEADERS) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install",
-
-    // Directories that can be imported by a cc_* module generated_headers property
-    export_include_dirs: [
-        "usr/audio/include/uapi",
-        "usr/include",
-        "usr/include/audio",
-        "usr/include/audio/include/uapi",
-        "usr/techpack/audio/include",
-    ],
-
-    // Sources for dependency tracking
-    dep_root: "$(TARGET_KERNEL_HEADERS)",
-    dep_files: [
-        "Makefile",
-        "include/**/*",
-        "arch/$(KERNEL_ARCH)/include/**/*",
-        "techpack/audio/include/**/*",
-    ],
-}
-
-cc_library_headers {
-    name: "generated_kernel_headers",
-    generated_headers: ["generated_kernel_includes"],
-    export_generated_headers: ["generated_kernel_includes"],
-    vendor_available: true,
-    recovery_available: true,
-}
-
 // Target platform agnostic config modules
 soong_config_module_type {
     name: "disable_postrender_cleanup",
@@ -553,4 +501,32 @@ inputdispatcher_skip_event_key {
             cppflags: ["-DINPUTDISPATCHER_SKIP_EVENT_KEY=%s"],
         },
     },
+}
+
+soong_config_module_type {
+    name: "force_build_fingerprint",
+    module_type: "cc_defaults",
+    config_namespace: "evolutionGlobalVars",
+    value_variables: ["force_build_fingerprint"],
+    properties: [
+        "cppflags"
+    ],
+}
+
+force_build_fingerprint {
+    name: "force_build_fingerprint_defaults",
+    soong_config_variables: {
+        force_build_fingerprint: {
+            cppflags: ["-DTARGET_FORCE_BUILD_FINGERPRINT=\"%s\""],
+        },
+    },
+}
+
+bootstrap_go_package {
+    name: "soong-evolution",
+    pkgPath: "evolution/soong/android",
+    srcs: [
+        "android/config.go",
+        "android/variable.go",
+    ],
 }
