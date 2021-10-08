@@ -17,8 +17,8 @@
 #
 
 # Versioning System
-EVO_BASE_VERSION := 5.9.2
-EVO_CODENAME := Sanctuary
+EVO_BASE_VERSION := 5.9.3
+EVO_CODENAME := Ocean
 
 # Set all versions
 EVO_BUILD_TYPE ?= UNOFFICIAL
