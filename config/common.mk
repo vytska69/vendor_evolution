@@ -192,6 +192,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_DEXPREOPT_SPEED_APPS += \
     SystemUI \
     NexusLauncherRelease
+    
+# Flatten APEXs for performance
+OVERRIDE_TARGET_FLATTEN_APEX := true
+
+# This needs to be specified explicitly to override ro.apex.updatable=true from
+# prebuilt vendors, as init reads /product/build.prop after /vendor/build.prop
+PRODUCT_PRODUCT_PROPERTIES += ro.apex.updatable=false
+
+
 
 # Overlay
 PRODUCT_PACKAGE_OVERLAYS += \
